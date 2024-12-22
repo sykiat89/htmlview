@@ -145,54 +145,26 @@ window.function = function (html, fileName, format, zoom, orientation, margin, b
 	  document.getElementById('print').addEventListener('click', function () {
   var element = document.getElementById('content');
   var button = this;
-  button.innerText = 'Printing...';
+  button.innerText = 'Opening...';
   button.className = 'downloading';
 
-  var opt = {
-    pagebreak: {
-      mode: ['css'],
-      before: ${JSON.stringify(breakBefore)},
-      after: ${JSON.stringify(breakAfter)},
-      avoid: ${JSON.stringify(breakAvoid)},
-    },
-    margin: ${margin},
-    filename: '${fileName}',
-    html2canvas: {
-      useCORS: true,
-      scale: ${quality}
-    },
-    jsPDF: {
-      unit: 'px',
-      orientation: '${orientation}',
-      format: [${finalDimensions}],
-      hotfixes: ['px_scaling']
-    }
-  };
+  // Get the HTML content
+  var htmlContent = element.innerHTML;
 
-  // Generate the PDF
-  html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-    // Open the generated PDF in a new window for printing
-    var blob = pdf.output('blob');
-    var url = URL.createObjectURL(blob);
+  // Open a new tab and write the content there
+  var newTab = window.open();
+  if (newTab) {
+    newTab.document.write('<html><head><title>' + fileName + '</title></head><body>');
+    newTab.document.write(htmlContent);  // Add the HTML content to the new tab
+    newTab.document.write('</body></html>');
+    newTab.document.close();  // Close the document after writing the content
+  } else {
+    alert('Please allow popups for this site.');
+  }
 
-    // Create an iframe to load the PDF for printing
-    var iframe = document.createElement('iframe');
-    iframe.style.position = 'absolute';
-    iframe.style.width = '0px';
-    iframe.style.height = '0px';
-    iframe.src = url;
-    document.body.appendChild(iframe);
-
-    // Trigger print once the PDF is loaded in the iframe
-    iframe.onload = function () {
-      iframe.contentWindow.print();
-      document.body.removeChild(iframe);  // Clean up iframe after printing
-    };
-
-    // Update the button status back to original
-    button.innerText = 'Print';
-    button.className = '';
-  });
+  // Reset the button text and class
+  button.innerText = 'Open in New Tab';
+  button.className = '';
 });
 
 	  </script>
