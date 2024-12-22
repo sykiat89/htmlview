@@ -136,41 +136,57 @@ window.function = function (html, fileName, format, zoom, orientation, margin, b
 	  <style>${customCSS}</style>
 	  <div class="main">
 	  <div class="header">
-		<button class="button" id="download">Download</button>
+		<button class="button" id="print">Print</button>
 	  </div>
 	  <div id="content">${html}</div>
 	  </div>
 	  <script>
-	  document.getElementById('download').addEventListener('click', function() {
-		var element = document.getElementById('content');
-		var button = this;
-		button.innerText = 'Downloading...';
-		button.className = 'downloading';
-  
-		var opt = {
-		pagebreak: { mode: ['css'], before: ${JSON.stringify(breakBefore)}, after: ${JSON.stringify(breakAfter)}, avoid: ${JSON.stringify(breakAvoid)} },
-		margin: ${margin},
-		filename: '${fileName}',
-		html2canvas: {
-		  useCORS: true,
-		  scale: ${quality}
-		},
-		jsPDF: {
-		  unit: 'px',
-		  orientation: '${orientation}',
-		  format: [${finalDimensions}],
-		  hotfixes: ['px_scaling']
-		}
-		};
-		html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
-		button.innerText = 'Done 🎉';
-		button.className = 'done';
-		setTimeout(function() { 
-		  button.innerText = 'Download';
-		  button.className = ''; 
-		}, 2000);
-		}).save();
-	  });
+	  document.getElementById('print').addEventListener('click', function () {
+    var element = document.getElementById('content');
+    var button = this;
+    button.innerText = 'Printing...';
+    button.className = 'downloading';
+
+    var opt = {
+        pagebreak: { mode: ['css'], before: ${JSON.stringify(breakBefore)}, after: ${JSON.stringify(breakAfter)}, avoid: ${JSON.stringify(breakAvoid)} },
+        margin: ${margin},
+        filename: '${fileName}',
+        html2canvas: {
+            useCORS: true,
+            scale: ${quality}
+        },
+        jsPDF: {
+            unit: 'px',
+            orientation: '${orientation}',
+            format: [${finalDimensions}],
+            hotfixes: ['px_scaling']
+        }
+    };
+
+    // Generate the PDF and open it for printing
+    html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+        // Open the PDF in a new window and print it
+        var blob = pdf.output('blob');
+        var url = URL.createObjectURL(blob);
+        var iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0px';
+        iframe.style.height = '0px';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        
+        // Trigger the print dialog once the iframe has loaded
+        iframe.onload = function () {
+            iframe.contentWindow.print();
+            document.body.removeChild(iframe);  // Remove the iframe after printing
+        };
+
+        // Update the button status back to original
+        button.innerText = 'Print';
+        button.className = '';
+    });
+});
+
 	  </script>
 	  `;
 	var encodedHtml = encodeURIComponent(originalHTML);
