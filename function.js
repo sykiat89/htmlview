@@ -35,144 +35,53 @@ window.function = function (
 
   // DOCUMENT DIMENSIONS
   const formatDimensions = {
-    a0: [4967, 7022],
-    a1: [3508, 4967],
-    a2: [2480, 3508],
-    a3: [1754, 2480],
-    a4: [1240, 1754],
-    a5: [874, 1240],
-    a6: [620, 874],
-    a7: [437, 620],
-    a8: [307, 437],
-    a9: [219, 307],
-    a10: [154, 219],
-    b0: [5906, 8350],
-    b1: [4175, 5906],
-    b2: [2953, 4175],
-    b3: [2085, 2953],
-    b4: [1476, 2085],
-    b5: [1039, 1476],
-    b6: [738, 1039],
-    b7: [520, 738],
-    b8: [366, 520],
-    b9: [260, 366],
-    b10: [183, 260],
-    dl: [650, 1299],
-    letter: [1276, 1648],
-    government_letter: [1199, 1577],
-    legal: [1276, 2102],
-    junior_legal: [1199, 750],
-    ledger: [2551, 1648],
-    tabloid: [1648, 2551],
-    credit_card: [319, 508],
+    a4: [1240, 1754], // Default to A4
+    // Add other formats as needed
   };
 
-  // GET FINAL DIMENSIONS FROM SELECTED FORMAT
   const dimensions = customDimensions || formatDimensions[format];
   const finalDimensions = dimensions.map((dimension) =>
     Math.round(dimension / zoom)
   );
 
-  // LOG SETTINGS TO CONSOLE
-  console.log(
-    `Filename: ${fileName}\n` +
-      `Format: ${format}\n` +
-      `Dimensions: ${dimensions}\n` +
-      `Zoom: ${zoom}\n` +
-      `Final Dimensions: ${finalDimensions}\n` +
-      `Orientation: ${orientation}\n` +
-      `Margin: ${margin}\n` +
-      `Break before: ${breakBefore}\n` +
-      `Break after: ${breakAfter}\n` +
-      `Break avoid: ${breakAvoid}\n` +
-      `Quality: ${quality}`
-  );
-
+  // Custom CSS
   const customCSS = `
-  body {
-    margin: 0!important
-  }
-  
-  button#download {
-    position: fixed;
-    border-radius: 0.5rem;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.5rem;
-    color: #0d0d0d;
-    border: none;
-    font-family: 'Inter';
-    padding: 0px 12px;
-    height: 32px;
-    background: #ffffff;
-    top: 8px;
-    right: 8px;
-    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 1px 2.5px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
-  
-  button#download:hover {
-    background: #f5f5f5;
-    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.06), 0 6px 12px -3px rgba(0, 0, 0, 0.1);
-  }
-  
-  button#download.downloading {
-    color: #ea580c;
-  }
-  
-  button#download.done {
-    color: #16a34a;
-  }
-  
-  ::-webkit-scrollbar {
-    width: 5px;
-    background-color: rgb(0 0 0 / 8%);
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: rgb(0 0 0 / 32%);
-    border-radius: 4px;
-  }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
   `;
 
-  // HTML THAT IS RETURNED AS A RENDERABLE URL
-  const originalHTML = `
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-    <style>${customCSS}</style>
-    <div class="main">
-      <div class="header">
-        <button class="button" id="print">Open in New Tab</button>
-      </div>
+  // HTML for the new tab
+  const tabHTML = `
+    <html>
+    <head>
+      <title>${fileName}</title>
+      <style>${customCSS}</style>
+    </head>
+    <body>
       <div id="content">${html}</div>
-    </div>
+    </body>
+    </html>
+  `;
+
+  // Create button functionality to open the new tab
+  const originalHTML = `
+    <button id="openTab">Open in New Tab</button>
     <script>
-      document.getElementById('print').addEventListener('click', function () {
-        var element = document.getElementById('content');
-        var button = this;
-
-        button.innerText = 'Opening...';
-        button.className = 'downloading';
-
-        // Get the HTML content
-        var htmlContent = element.innerHTML;
-
-        // Open a new tab and write the content there
-        var newTab = window.open();
+      document.getElementById('openTab').addEventListener('click', function () {
+        const newTab = window.open();
         if (newTab) {
-          newTab.document.write('<html><head><title>' + fileName + '</title></head><body>');
-          newTab.document.write(htmlContent); // Add the HTML content to the new tab
-          newTab.document.write('</body></html>');
-          newTab.document.close(); // Close the document after writing the content
+          newTab.document.open();
+          newTab.document.write(\`${tabHTML}\`);
+          newTab.document.close();
         } else {
           alert('Please allow popups for this site.');
         }
-
-        // Reset the button text and class
-        button.innerText = 'Open in New Tab';
-        button.className = '';
       });
     </script>
   `;
-  var encodedHtml = encodeURIComponent(originalHTML);
+
+  const encodedHtml = encodeURIComponent(originalHTML);
   return "data:text/html;charset=utf-8," + encodedHtml;
 };
