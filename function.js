@@ -53,19 +53,24 @@ window.function = function (
   `;
 
   // HTML for the new tab
-const tabHTML = `
-  <html>
-    <head>
-      <title>${fileName}</title>
-      <style>${customCSS}</style>
-    </head>
-    <body>
-      <div id="content">${html}</div>
-    </body>
-  </html>
-`;
+  const tabHTML = `
+    <html>
+      <head>
+        <title>${fileName}</title>
+        <style>${customCSS}</style>
+      </head>
+      <body>
+        <div id="content">${html}</div>
+        <script>
+          window.onload = function () {
+            window.print(); // Automatically trigger the print dialog
+          };
+        </script>
+      </body>
+    </html>
+  `;
 
-  // Create button functionality to open the new tab
+  // Button to open the new tab
   const originalHTML = `
     <button id="openTab">Open in New Tab</button>
     <script>
