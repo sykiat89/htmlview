@@ -1,47 +1,87 @@
-window.function = function (html, fileName) {
-    // FIDELITY MAPPING
-    const fidelityMap = {
-        low: 1,
-        standard: 1.5,
-        high: 2,
-    };
+window.function = function (
+  html,
+  fileName,
+  format,
+  zoom,
+  orientation,
+  margin,
+  breakBefore,
+  breakAfter,
+  breakAvoid,
+  fidelity,
+  customDimensions
+) {
+  // FIDELITY MAPPING
+  const fidelityMap = {
+    low: 1,
+    standard: 1.5,
+    high: 2,
+  };
 
-    // DYNAMIC VALUES
-    html = html.value ?? "No HTML set.";
-    fileName = fileName.value ?? "file";
-    
-    // DOCUMENT DIMENSIONS
-    const formatDimensions = {
-        a4: [1240, 1754],
-    };
-    
-    // FINAL HTML TO OPEN IN NEW TAB
-    const finalHTML = `
+  // DYNAMIC VALUES
+  html = html.value ?? "No HTML set.";
+  fileName = fileName.value ?? "file";
+  format = format.value ?? "a4";
+  zoom = zoom.value ?? "1";
+  orientation = orientation.value ?? "portrait";
+  margin = margin.value ?? "0";
+  breakBefore = breakBefore.value ? breakBefore.value.split(",") : [];
+  breakAfter = breakAfter.value ? breakAfter.value.split(",") : [];
+  breakAvoid = breakAvoid.value ? breakAvoid.value.split(",") : [];
+  quality = fidelityMap[fidelity.value] ?? 1.5;
+  customDimensions = customDimensions.value
+    ? customDimensions.value.split(",").map(Number)
+    : null;
+
+  // DOCUMENT DIMENSIONS
+  const formatDimensions = {
+    a4: [1240, 1754], // Default to A4
+    // Add other formats as needed
+  };
+
+  const dimensions = customDimensions || formatDimensions[format];
+  const finalDimensions = dimensions.map((dimension) =>
+    Math.round(dimension / zoom)
+  );
+
+  // Custom CSS
+  const customCSS = `
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+  `;
+
+  // HTML for the new tab
+  const tabHTML = `
     <html>
     <head>
-        <title>${fileName}</title>
-        <style>
-            /* Add your styling here */
-            body { font-family: Arial, sans-serif; margin: 0; padding: 10px; }
-            h2 { color: #333; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            td, th { padding: 8px; border: 1px solid #ddd; text-align: left; }
-        </style>
+      <title>${fileName}</title>
+      <style>${customCSS}</style>
     </head>
     <body>
-        <h2>${fileName}</h2>
-        <div>${html}</div>
+      <div id="content">${html}</div>
     </body>
-    </html>`;
+    </html>
+  `;
 
-    // Open the HTML in a new tab
-    const newTab = window.open();
-    if (newTab) {
-        newTab.document.write(finalHTML);  // Write the HTML content to the new tab
-        newTab.document.close();
-    } else {
-        alert('Please allow popups for this site.');
-    }
+  // Create button functionality to open the new tab
+  const originalHTML = `
+    <button id="openTab">Open in New Tab</button>
+    <script>
+      document.getElementById('openTab').addEventListener('click', function () {
+        const newTab = window.open();
+        if (newTab) {
+          newTab.document.open();
+          newTab.document.write(\`${tabHTML}\`);
+          newTab.document.close();
+        } else {
+          alert('Please allow popups for this site.');
+        }
+      });
+    </script>
+  `;
 
-    return "data:text/html;charset=utf-8," + encodeURIComponent(finalHTML);  // You can still return the data URL if needed
+  const encodedHtml = encodeURIComponent(originalHTML);
+  return "data:text/html;charset=utf-8," + encodedHtml;
 };
