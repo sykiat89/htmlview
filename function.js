@@ -72,8 +72,7 @@ const tabHTML = `
 	  <style>${customCSS}</style>
 	  <div class="main">
 	  <div class="header">
-		<button class="button" id="download">Download</button>
-	  </div>
+		  </div>
 	  <div id="content">${html}</div>
 	  </div>
 	  <script>
