@@ -67,6 +67,7 @@ const tabHTML = `
 
   // Create button functionality to open the new tab
   const originalHTML = `
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <button id="openTab">Print</button>
     <script>
       document.getElementById('openTab').addEventListener('click', function () {
