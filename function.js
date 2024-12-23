@@ -65,29 +65,25 @@ const tabHTML = `
   </html>
 `;
 
-  // Create button functionality to open the new tab
-  const originalHTML = `
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-    <button id="openTab">Print</button>
-    <script>
-      document.getElementById('openTab').addEventListener('click', function () {
-        const newTab = window.open();
-        if (newTab) {
-          newTab.document.open();
-          newTab.document.write(\`${tabHTML}\`);
-          newTab.document.close();
-        } else {
-          alert('Please allow popups for this site.');
-        }
-      });
-window.onload = function () {
+
+  	// HTML THAT IS RETURNED AS A RENDERABLE URL
+	const originalHTML = `
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+	  <style>${customCSS}</style>
+	  <div class="main">
+	  <div class="header">
+		<button class="button" id="download">Download</button>
+	  </div>
+	  <div id="content">${html}</div>
+	  </div>
+	  <script>
+	  window.onload = function () {
             setTimeout(() => {
               window.print();
             }, 500); // Delay ensures rendering before print
           };
-          </script>
-  `;
-
-  const encodedHtml = encodeURIComponent(originalHTML);
+		  </script>
+	  `;
+	var encodedHtml = encodeURIComponent(originalHTML);
   return "data:text/html;charset=utf-8," + encodedHtml;
 };
