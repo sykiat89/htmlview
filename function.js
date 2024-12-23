@@ -33,17 +33,6 @@ window.function = function (
     ? customDimensions.value.split(",").map(Number)
     : null;
 
-  // DOCUMENT DIMENSIONS
-  const formatDimensions = {
-    a4: [1240, 1754], // Default to A4
-    // Add other formats as needed
-  };
-
-  const dimensions = customDimensions || formatDimensions[format];
-  const finalDimensions = dimensions.map((dimension) =>
-    Math.round(dimension / zoom)
-  );
-
   // Custom CSS
   const customCSS = `
     body {
@@ -73,23 +62,13 @@ window.function = function (
     </html>
   `;
 
-  // Create button functionality to open the new tab
-  const originalHTML = `
-    <button id="openTab">Open in New Tab</button>
-    <script>
-      document.getElementById('openTab').addEventListener('click', function () {
-        const newTab = window.open();
-        if (newTab) {
-          newTab.document.open();
-          newTab.document.write(\`${tabHTML}\`);
-          newTab.document.close();
-        } else {
-          alert('Please allow popups for this site.');
-        }
-      });
-    </script>
-  `;
-
-  const encodedHtml = encodeURIComponent(originalHTML);
-  return "data:text/html;charset=utf-8," + encodedHtml;
+  // Button functionality to open the new tab
+  const newTab = window.open();
+  if (newTab) {
+    newTab.document.open();
+    newTab.document.write(tabHTML);
+    newTab.document.close();
+  } else {
+    alert('Please allow popups for this site.');
+  }
 };
