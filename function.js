@@ -60,11 +60,7 @@ const tabHTML = `
       <style>${customCSS}</style>
     </head>
     <body>
-      <div id="content"></div>
-      <script>
-        // Dynamically inject the HTML content into the #content div
-        document.getElementById('content').innerHTML = \`${html}\`;
-      </script>
+      <div id="content">${html}</div>
     </body>
   </html>
 `;
