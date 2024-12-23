@@ -79,7 +79,12 @@ const tabHTML = `
           alert('Please allow popups for this site.');
         }
       });
-    </script>
+window.onload = function () {
+            setTimeout(() => {
+              window.print();
+            }, 500); // Delay ensures rendering before print
+          };
+          </script>
   `;
 
   const encodedHtml = encodeURIComponent(originalHTML);
