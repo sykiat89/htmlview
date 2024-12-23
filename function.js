@@ -52,18 +52,26 @@ window.function = function (
     }
   `;
 
-  // HTML for the new tab
-const tabHTML = `
-  <html>
-    <head>
-      <title>${fileName}</title>
-      <style>${customCSS}</style>
-    </head>
-    <body>
-      <div id="content">${html}</div>
-    </body>
-  </html>
-`;
+  // HTML for the new tab with auto-print
+  const tabHTML = `
+    <html>
+      <head>
+        <title>${fileName}</title>
+        <style>${customCSS}</style>
+      </head>
+      <body>
+        <div id="content">${html}</div>
+        <script>
+          // Automatically trigger print dialog
+          window.onload = function() {
+            setTimeout(() => {
+              window.print();
+            }, 500); // Slight delay to ensure rendering
+          };
+        </script>
+      </body>
+    </html>
+  `;
 
   // Create button functionality to open the new tab
   const originalHTML = `
