@@ -1,38 +1,87 @@
 window.function = function (
   html,
-  fileName
+  fileName,
+  format,
+  zoom,
+  orientation,
+  margin,
+  breakBefore,
+  breakAfter,
+  breakAvoid,
+  fidelity,
+  customDimensions
 ) {
-  // Default values
-  html = html.value ?? "<h1>No HTML provided</h1>";
-  fileName = fileName.value ?? "document";
+  // FIDELITY MAPPING
+  const fidelityMap = {
+    low: 1,
+    standard: 1.5,
+    high: 2,
+  };
 
-  // HTML for the new tab with auto-print
-  const tabHTML = `
-    <html>
-      <head>
-        <title>${fileName}</title>
-      </head>
-      <body>
-        <div id="content">${html}</div>
-        <script>
-          // Automatically trigger print dialog
-          window.onload = function() {
-            setTimeout(() => {
-              window.print();
-            }, 500); // Slight delay to ensure rendering
-          };
-        </script>
-      </body>
-    </html>
-  `;
+  // DYNAMIC VALUES
+  html = html.value ?? "No HTML set.";
+  fileName = fileName.value ?? "file";
+  format = format.value ?? "a4";
+  zoom = zoom.value ?? "1";
+  orientation = orientation.value ?? "portrait";
+  margin = margin.value ?? "0";
+  breakBefore = breakBefore.value ? breakBefore.value.split(",") : [];
+  breakAfter = breakAfter.value ? breakAfter.value.split(",") : [];
+  breakAvoid = breakAvoid.value ? breakAvoid.value.split(",") : [];
+  quality = fidelityMap[fidelity.value] ?? 1.5;
+  customDimensions = customDimensions.value
+    ? customDimensions.value.split(",").map(Number)
+    : null;
 
-  // Open the new tab and write the HTML
-  const newTab = window.open();
-  if (newTab) {
-    newTab.document.open();
-    newTab.document.write(tabHTML);
-    newTab.document.close();
-  } else {
-    alert('Please allow popups for this site.');
-  }
+  // DOCUMENT DIMENSIONS
+  const formatDimensions = {
+    a4: [1240, 1754], // Default to A4
+    // Add other formats as needed
+  };
+
+  const dimensions = customDimensions || formatDimensions[format];
+  const finalDimensions = dimensions.map((dimension) =>
+    Math.round(dimension / zoom)
+  );
+
+  // Custom CSS
+  const customCSS = 
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+  ;
+
+  // HTML for the new tab
+const tabHTML = 
+  <html>
+    <head>
+      <title>${fileName}</title>
+      <style>${customCSS}</style>
+    </head>
+    <body>
+      <div id="content">${html}</div>
+    </body>
+  </html>
+;
+
+  // Create button functionality to open the new tab
+  const originalHTML = 
+    <button id="openTab">Open in New Tab</button>
+    <script>
+      document.getElementById('openTab').addEventListener('click', function () {
+        const newTab = window.open();
+        if (newTab) {
+          newTab.document.open();
+          newTab.document.write(\${tabHTML}\);
+          newTab.document.close();
+        } else {
+          alert('Please allow popups for this site.');
+        }
+      });
+    </script>
+  ;
+
+  const encodedHtml = encodeURIComponent(originalHTML);
+  return "data:text/html;charset=utf-8," + encodedHtml;
 };
