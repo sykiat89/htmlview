@@ -61,14 +61,7 @@ const tabHTML = `
     </head>
     <body>
       <div id="content">${html}</div>
-      <script>
-          window.onload = function () {
-            setTimeout(() => {
-              window.print();
-            }, 500); // Delay ensures rendering before print
-          };
-        </script>
-    </body>
+         </body>
   </html>
 `;
 
