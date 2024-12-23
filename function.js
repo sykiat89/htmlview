@@ -62,12 +62,8 @@ window.function = function (
       <body>
         <div id="content">${html}</div>
         <script>
-          // Automatically open the print dialog after the page loads
           window.onload = function () {
-            setTimeout(() => {
-              window.print();
-              window.onafterprint = function() { window.close(); }; // Auto-close after printing
-            }, 500); // Small delay to ensure the content is fully rendered
+            window.print(); // Automatically trigger the print dialog
           };
         </script>
       </body>
