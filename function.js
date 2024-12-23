@@ -53,17 +53,21 @@ window.function = function (
   `;
 
   // HTML for the new tab
-  const tabHTML = `
-    <html>
+const tabHTML = `
+  <html>
     <head>
       <title>${fileName}</title>
       <style>${customCSS}</style>
     </head>
     <body>
-      <div id="content">${html}</div>
+      <div id="content"></div>
+      <script>
+        // Dynamically inject the HTML content into the #content div
+        document.getElementById('content').innerHTML = \`${html}\`;
+      </script>
     </body>
-    </html>
-  `;
+  </html>
+`;
 
   // Create button functionality to open the new tab
   const originalHTML = `
