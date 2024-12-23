@@ -45,47 +45,42 @@ window.function = function (
   );
 
   // Custom CSS
-  const customCSS = `
+  const customCSS = 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
     }
-  `;
+  ;
 
   // HTML for the new tab
-  const tabHTML = `
-    <html>
-      <head>
-        <title>${fileName}</title>
-        <style>${customCSS}</style>
-      </head>
-      <body>
-        <div id="content">${html}</div>
-        <script>
-          window.onload = function () {
-            window.print(); // Automatically trigger the print dialog
-          };
-        </script>
-      </body>
-    </html>
-  `;
+const tabHTML = 
+  <html>
+    <head>
+      <title>${fileName}</title>
+      <style>${customCSS}</style>
+    </head>
+    <body>
+      <div id="content">${html}</div>
+    </body>
+  </html>
+;
 
-  // Button to open the new tab
-  const originalHTML = `
+  // Create button functionality to open the new tab
+  const originalHTML = 
     <button id="openTab">Open in New Tab</button>
     <script>
       document.getElementById('openTab').addEventListener('click', function () {
         const newTab = window.open();
         if (newTab) {
           newTab.document.open();
-          newTab.document.write(\`${tabHTML}\`);
+          newTab.document.write(\${tabHTML}\);
           newTab.document.close();
         } else {
           alert('Please allow popups for this site.');
         }
       });
     </script>
-  `;
+  ;
 
   const encodedHtml = encodeURIComponent(originalHTML);
   return "data:text/html;charset=utf-8," + encodedHtml;
